@@ -1,11 +1,17 @@
 package service;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.xml.bind.DatatypeConverter;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Service class for URL shortening functionality.
  */
+@ApplicationScoped
 public class UrlShortenerService {
 
     private Map<String, String> urlMap;
@@ -35,25 +41,21 @@ public class UrlShortenerService {
     }
 
     /**
-     * Generates a unique shortened URL based on the original URL.
+     * Hashes a URL using MD5 algorithm.
      *
-     * @param originalUrl The original URL.
-     * @return The shortened URL.
+     * @param originalUrl The URL to be hashed.
+     * @return The first seven digits of the hexadecimal representation of the hash.
      */
-    public String generateShortUrl(String originalUrl){
-        int urlLength = originalUrl.length();
-        int i = 0;
-        int counter;
-        int result = 0;
-
-        while(i <= urlLength){
-            counter = i + 1;
-            final int mapped = base62alphabet.indexOf(originalUrl.charAt(i));
-            result += result + (mapped * Math.pow(base, urlLength - counter));
-            i++;
+    private String generateShortUrl(String originalUrl) {
+        try {
+            // Create a MessageDigest instance for MD5 hashing
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            md.update(originalUrl.getBytes());
+            byte[] digest = md.digest();
+            return DatatypeConverter.printHexBinary(digest).toUpperCase().substring(0, 7);
         }
-
-        return String.valueOf(result);
+        catch (NoSuchAlgorithmException ignored){}
+        return null;
     }
 }
 

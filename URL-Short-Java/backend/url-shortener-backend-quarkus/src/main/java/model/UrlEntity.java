@@ -5,20 +5,12 @@ import jakarta.persistence.*;
 @Entity
 public class UrlEntity {
 
-    public UrlEntity() {}
-
-    public UrlEntity(Long id, String shortUrl, String originalUrl) {
-        this.id = id;
-        this.shortUrl = shortUrl;
-        this.originalUrl = originalUrl;
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     /**
-     * The shortend URL in Bas 62 Format
+     * The shortend URL
      */
     private String shortUrl;
 
@@ -26,6 +18,14 @@ public class UrlEntity {
      * The original URL, where the user gets relocated
      */
     private String originalUrl;
+
+    public UrlEntity() {}
+
+    public UrlEntity(Long id, String shortUrl, String originalUrl) {
+        this.id = id;
+        this.shortUrl = shortUrl;
+        this.originalUrl = originalUrl;
+    }
 
     public Long getId() {
         return id;

@@ -33,7 +33,7 @@ public class ShortUrlResource {
     @Transactional
     public String addURLPair(UrlEntity urlEntity) {
         shortUrlRepository.addURLPair(urlEntity);
-        return "Short URL: " + urlEntity.getShortUrl() + ", Original URL: " + urlEntity.getOriginalUrl();
+        return "Original URL: " + urlEntity.getOriginalUrl();
     }
 
 
