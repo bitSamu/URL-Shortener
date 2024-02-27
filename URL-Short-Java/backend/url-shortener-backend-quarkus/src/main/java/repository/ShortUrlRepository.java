@@ -8,6 +8,8 @@ import jakarta.transaction.Transactional;
 import model.UrlEntity;
 import service.UrlShortenerService;
 
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
@@ -22,6 +24,10 @@ public class ShortUrlRepository {
     @Inject
     UrlShortenerService service;
 
+    @Inject
+    @ConfigProperty(name = "domain.shorten.url")
+    private String domain;
+
     /**
      * Creates a new URL entity with the shortend url in the database.
      *
@@ -29,7 +35,7 @@ public class ShortUrlRepository {
      */
     @Transactional
     public void addURLPair(UrlEntity urlEntity) {
-        urlEntity.setShortUrl(service.shortenUrl(urlEntity.getOriginalUrl()));
+        urlEntity.setShortUrl(domain + service.shortenUrl(urlEntity.getOriginalUrl()));
         em.persist(urlEntity);
     }
 
@@ -46,7 +52,18 @@ public class ShortUrlRepository {
         return em.createQuery("SELECT u FROM UrlEntity u", UrlEntity.class).getResultList();
     }
 
+    /**
+     * Retrieves the original URL to a given short URL
+     *
+     * @param shortUrl The short URL to get the corresponding URL
+     * @return Either the original URL or null, if the original URL to the given URL does not exist
+     */
     public String getOriginalUrl(String shortUrl){
-        return em.createQuery("SELECT u FROM UrlEntity u WHERE u.shortUrl = " + shortUrl, UrlEntity.class).getResultList().get(0).getOriginalUrl();
+        return em.createQuery("SELECT u.originalUrl FROM UrlEntity u WHERE u.shortUrl = :shortUrl", String.class)
+                .setParameter("shortUrl", shortUrl)
+                .getResultList()
+                .stream()
+                .findFirst()
+                .orElse(null);
     }
 }

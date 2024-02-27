@@ -44,7 +44,7 @@ public class DBInitializer {
                 stmt.execute("CREATE TABLE url_shortener_db (" +
                         "id SERIAL PRIMARY KEY, " +
                         "short_url VARCHAR(255), " +
-                        "original_url VARCHAR(255))");
+                        "original_url TEXT)");
 
                 ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS rowcount FROM url_shortener_db");
 
